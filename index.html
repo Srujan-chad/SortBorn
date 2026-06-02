@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SortViz — Professional Sorting Algorithm Visualizer with real-time comparison, split-screen mode, custom arrays, and theme customization." />
+  <title>SortViz — Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header class="app-header" role="banner">
+  <div class="header-brand">
+    <div class="brand-icon" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <rect x="1"  y="14" width="5" height="11" rx="1.5" fill="#10b981"/>
+        <rect x="8"  y="9"  width="5" height="16" rx="1.5" fill="#10b981"/>
+        <rect x="15" y="4"  width="5" height="21" rx="1.5" fill="#34d399"/>
+        <rect x="22" y="1"  width="3" height="24" rx="1"   fill="#6ee7b7"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1 class="brand-title">SortViz</h1>
+      <p class="brand-subtitle">Algorithm Visualizer</p>
+    </div>
+  </div>
+
+  <nav class="header-nav" aria-label="Main navigation">
+    <!-- Split View Toggle -->
+    <button id="btn-mode-toggle" class="hdr-btn" title="Toggle Split-Screen" aria-pressed="false">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <rect x="1" y="2" width="14" height="12" rx="1.5"/>
+        <line x1="8" y1="2" x2="8" y2="14"/>
+      </svg>
+      <span id="label-mode">Split View</span>
+    </button>
+
+    <!-- Sort Order Toggle -->
+    <div class="order-toggle" role="group" aria-label="Sort order">
+      <button id="btn-asc" class="order-btn active" aria-pressed="true" title="Sort Ascending">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="13" x2="8" y2="3"/><path d="M4 7l4-4 4 4"/>
+        </svg>
+        ASC
+      </button>
+      <button id="btn-desc" class="order-btn" aria-pressed="false" title="Sort Descending">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="3" x2="8" y2="13"/><path d="M4 9l4 4 4-4"/>
+        </svg>
+        DESC
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<main class="app-main" role="main">
+
+  <!-- ─────────────────── SIDEBAR ─────────────────── -->
+  <aside class="sidebar" aria-label="Controls">
+
+    <!-- ╔══════════════════════════════╗ -->
+    <!-- ║  1 · Dataset Configuration  ║ -->
+    <!-- ╚══════════════════════════════╝ -->
+    <div class="sb-group" id="sbg-dataset">
+      <button class="sb-group-hdr" data-target="sg-dataset" aria-expanded="true" aria-controls="sg-dataset">
+        <div class="sb-hdr-left">
+          <span class="sb-hdr-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="8" cy="8" r="2.5"/>
+              <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/>
+            </svg>
+          </span>
+          <span>Dataset Configuration</span>
+        </div>
+        <svg class="sb-chevron" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>
+      </button>
+
+      <div class="sb-group-body" id="sg-dataset">
+        <!-- Array Size -->
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="slider-size">
+            <span>Array Size</span>
+            <span class="ctrl-val" id="val-size">60</span>
+          </label>
+          <input type="range" id="slider-size" class="styled-slider" min="10" max="200" value="60" aria-label="Array size" />
+          <div class="slider-ends"><span>10</span><span>200</span></div>
+        </div>
+
+        <!-- Animation Speed -->
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="slider-speed">
+            <span>Delay</span>
+            <span class="ctrl-val" id="val-speed">50ms</span>
+          </label>
+          <input type="range" id="slider-speed" class="styled-slider" min="1" max="500" value="50" aria-label="Animation delay in ms" />
+          <div class="slider-ends">
+            <span>1ms Fast</span>
+            <span class="slow-mode-hint" id="slow-mode-hint">500ms Slow</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-pair">
+          <button id="btn-generate" class="btn btn-ghost btn-icon-label" aria-label="Generate new random array">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13.5 2.5A6.5 6.5 0 1 1 2.5 13.5"/><path d="M13.5 2.5V7H9"/>
+            </svg>
+            New Array
+          </button>
+          <button id="btn-custom-input" class="btn btn-ghost btn-icon-label" aria-label="Enter custom array" title="Type your own numbers">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11.5 2.5a2.121 2.121 0 0 1 3 3L5 15H2v-3z"/>
+            </svg>
+            Custom
+          </button>
+        </div>
+      </div>
+    </div><!-- /sbg-dataset -->
+
+    <!-- ╔══════════════════════════════╗ -->
+    <!-- ║  2 · Algorithm Selection    ║ -->
+    <!-- ╚══════════════════════════════╝ -->
+    <div class="sb-group" id="sbg-algo">
+      <button class="sb-group-hdr" data-target="sg-algo" aria-expanded="true" aria-controls="sg-algo">
+        <div class="sb-hdr-left">
+          <span class="sb-hdr-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 11l7 4 7-4M1 7l7 4 7-4M8 2L1 6l7 4 7-4z"/>
+            </svg>
+          </span>
+          <span>Algorithm Selection</span>
+        </div>
+        <svg class="sb-chevron" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>
+      </button>
+
+      <div class="sb-group-body" id="sg-algo">
+        <!-- Primary -->
+        <div class="algo-section-hdr">
+          <span class="algo-section-dot primary-section-dot"></span>
+          Primary
+        </div>
+        <div class="algo-grid" id="algo-primary-grid" role="radiogroup" aria-label="Primary algorithm">
+
+          <label class="algo-badge" title="Bubble Sort — O(n²) · Stable">
+            <input type="radio" name="algo-primary" value="bubble" checked />
+            <span class="badge-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+                <circle cx="5.5" cy="9.5" r="3.5"/><circle cx="11" cy="5" r="2.5"/>
+                <line x1="8.2" y1="7.8" x2="9.2" y2="6.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="badge-text">Bubble</span>
+          </label>
+
+          <label class="algo-badge" title="Quick Sort — O(n log n) avg · Unstable">
+            <input type="radio" name="algo-primary" value="quick" />
+            <span class="badge-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M9.5 1.5L5 8.5H8.5L7 14.5L13 6.5H9.5z" stroke="none"/>
+              </svg>
+            </span>
+            <span class="badge-text">Quick</span>
+          </label>
+
+          <label class="algo-badge" title="Merge Sort — O(n log n) · Stable">
+            <input type="radio" name="algo-primary" value="merge" />
+            <span class="badge-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 4v3.5l6 3 6-3V4M8 10.5V14"/>
+              </svg>
+            </span>
+            <span class="badge-text">Merge</span>
+          </label>
+
+          <label class="algo-badge" title="Insertion Sort — O(n²) · Stable">
+            <input type="radio" name="algo-primary" value="insertion" />
+            <span class="badge-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="2" x2="8" y2="10"/><path d="M5 7.5l3 3.5 3-3.5"/>
+                <line x1="3" y1="13.5" x2="13" y2="13.5"/>
+              </svg>
+            </span>
+            <span class="badge-text">Insertion</span>
+          </label>
+
+          <label class="algo-badge" title="Selection Sort — O(n²) · Unstable">
+            <input type="radio" name="algo-primary" value="selection" />
+            <span class="badge-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+                <circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2"/>
+                <line x1="8" y1="1" x2="8" y2="2.5"/><line x1="8" y1="13.5" x2="8" y2="15"/>
+                <line x1="1" y1="8" x2="2.5" y2="8"/><line x1="13.5" y1="8" x2="15" y2="8"/>
+              </svg>
+            </span>
+            <span class="badge-text">Selection</span>
+          </label>
+
+        </div><!-- /algo-primary-grid -->
+
+        <!-- Secondary (split mode) -->
+        <div id="secondary-algo-panel" class="secondary-algo-panel hidden" aria-labelledby="secondary-algo-label">
+          <div class="algo-section-hdr secondary-hdr" id="secondary-algo-label">
+            <span class="algo-section-dot secondary-section-dot"></span>
+            Compare With →
+          </div>
+          <div class="algo-grid" id="algo-secondary-grid" role="radiogroup" aria-label="Secondary algorithm">
+
+            <label class="algo-badge" title="Bubble Sort — O(n²) · Stable">
+              <input type="radio" name="algo-secondary" value="bubble" />
+              <span class="badge-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <circle cx="5.5" cy="9.5" r="3.5"/><circle cx="11" cy="5" r="2.5"/>
+                  <line x1="8.2" y1="7.8" x2="9.2" y2="6.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="badge-text">Bubble</span>
+            </label>
+
+            <label class="algo-badge" title="Quick Sort — O(n log n) avg · Unstable">
+              <input type="radio" name="algo-secondary" value="quick" />
+              <span class="badge-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M9.5 1.5L5 8.5H8.5L7 14.5L13 6.5H9.5z" stroke="none"/>
+                </svg>
+              </span>
+              <span class="badge-text">Quick</span>
+            </label>
+
+            <label class="algo-badge" title="Merge Sort — O(n log n) · Stable">
+              <input type="radio" name="algo-secondary" value="merge" checked />
+              <span class="badge-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 4v3.5l6 3 6-3V4M8 10.5V14"/>
+                </svg>
+              </span>
+              <span class="badge-text">Merge</span>
+            </label>
+
+            <label class="algo-badge" title="Insertion Sort — O(n²) · Stable">
+              <input type="radio" name="algo-secondary" value="insertion" />
+              <span class="badge-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="2" x2="8" y2="10"/><path d="M5 7.5l3 3.5 3-3.5"/>
+                  <line x1="3" y1="13.5" x2="13" y2="13.5"/>
+                </svg>
+              </span>
+              <span class="badge-text">Insertion</span>
+            </label>
+
+            <label class="algo-badge" title="Selection Sort — O(n²) · Unstable">
+              <input type="radio" name="algo-secondary" value="selection" />
+              <span class="badge-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+                  <circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2"/>
+                  <line x1="8" y1="1" x2="8" y2="2.5"/><line x1="8" y1="13.5" x2="8" y2="15"/>
+                  <line x1="1" y1="8" x2="2.5" y2="8"/><line x1="13.5" y1="8" x2="15" y2="8"/>
+                </svg>
+              </span>
+              <span class="badge-text">Selection</span>
+            </label>
+
+          </div><!-- /algo-secondary-grid -->
+        </div><!-- /secondary-algo-panel -->
+
+      </div>
+    </div><!-- /sbg-algo -->
+
+    <!-- ╔══════════════════════════════╗ -->
+    <!-- ║  3 · Visual Settings        ║ -->
+    <!-- ╚══════════════════════════════╝ -->
+    <div class="sb-group" id="sbg-visual">
+      <button class="sb-group-hdr" data-target="sg-visual" aria-expanded="true" aria-controls="sg-visual">
+        <div class="sb-hdr-left">
+          <span class="sb-hdr-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 8A5 5 0 1 1 3 8a5 5 0 0 1 10 0z"/>
+              <path d="M8 13c1.1 0 2-.9 2-2H6c0 1.1.9 2 2 2z"/>
+              <circle cx="5.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="10.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span>Visual Settings</span>
+        </div>
+        <svg class="sb-chevron" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>
+      </button>
+
+      <div class="sb-group-body" id="sg-visual">
+        <!-- Color Theme -->
+        <div class="visual-subsection-label">Bar Theme</div>
+        <div class="theme-swatches">
+          <label class="swatch-item" title="Idle / Default color">
+            <input type="color" id="color-idle" value="#334155" class="color-input" data-var="--color-bar-default" />
+            <div class="swatch-circle" id="swatch-idle" style="background:#334155"></div>
+            <span class="swatch-name">Idle</span>
+          </label>
+          <label class="swatch-item" title="Comparing color">
+            <input type="color" id="color-compare" value="#f59e0b" class="color-input" data-var="--color-bar-compare" />
+            <div class="swatch-circle" id="swatch-compare" style="background:#f59e0b"></div>
+            <span class="swatch-name">Compare</span>
+          </label>
+          <label class="swatch-item" title="Swap / Move color">
+            <input type="color" id="color-swap" value="#ef4444" class="color-input" data-var="--color-bar-swap" />
+            <div class="swatch-circle" id="swatch-swap" style="background:#ef4444"></div>
+            <span class="swatch-name">Swap</span>
+          </label>
+          <label class="swatch-item" title="Sorted / Final color">
+            <input type="color" id="color-sorted" value="#10b981" class="color-input" data-var="--color-bar-sorted" />
+            <div class="swatch-circle" id="swatch-sorted" style="background:#10b981"></div>
+            <span class="swatch-name">Sorted</span>
+          </label>
+        </div>
+
+        <!-- Legend -->
+        <div class="visual-subsection-label" style="margin-top:16px">Legend</div>
+        <ul class="legend-list" role="list">
+          <li class="legend-item"><span class="legend-dot default-dot" aria-hidden="true"></span>Default</li>
+          <li class="legend-item"><span class="legend-dot compare-dot" aria-hidden="true"></span>Comparing</li>
+          <li class="legend-item"><span class="legend-dot swap-dot" aria-hidden="true"></span>Swapping</li>
+          <li class="legend-item"><span class="legend-dot sorted-dot" aria-hidden="true"></span>Sorted</li>
+          <li class="legend-item"><span class="legend-dot pivot-dot" aria-hidden="true"></span>Pivot</li>
+        </ul>
+      </div>
+    </div><!-- /sbg-visual -->
+
+    <!-- ╔══════════════════════════════╗ -->
+    <!-- ║  Playback (always visible)  ║ -->
+    <!-- ╚══════════════════════════════╝ -->
+    <div class="sb-playback">
+      <!-- Controls -->
+      <div class="playback-grid">
+        <button id="btn-play" class="btn btn-play" aria-label="Start sorting">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><polygon points="3,2 14,8 3,14"/></svg>
+          Play
+        </button>
+        <button id="btn-pause" class="btn btn-pause" disabled aria-label="Pause sorting">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="2.5" y="2" width="4" height="12" rx="1"/><rect x="9.5" y="2" width="4" height="12" rx="1"/></svg>
+          Pause
+        </button>
+        <button id="btn-stop" class="btn btn-stop" disabled aria-label="Stop sorting">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1.5"/></svg>
+          Stop
+        </button>
+      </div>
+
+      <!-- Status -->
+      <div id="status-indicator" class="status-bar" role="status" aria-live="polite">
+        <span class="status-dot idle" id="status-dot"></span>
+        <span id="status-text">Ready</span>
+        <span class="status-spacer"></span>
+        <span class="slow-badge hidden" id="slow-badge">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M9 2L5 8h3l-1.5 6L13 7H9.5z"/></svg>
+          Slow
+        </span>
+      </div>
+
+      <!-- Metrics (collapsible) -->
+      <div class="metrics-section">
+        <button class="metrics-toggle-btn" id="metrics-toggle" aria-expanded="true" aria-controls="metrics-panel">
+          <span id="section-metrics-title">Metrics</span>
+          <svg class="metrics-chevron" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>
+        </button>
+        <div id="metrics-panel" class="metrics-panel">
+          <!-- Primary -->
+          <div class="metrics-group">
+            <div class="metrics-group-label" id="metrics-label-primary">Primary</div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value" id="metric-comparisons-1">0</div>
+                <div class="metric-label">Comparisons</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="metric-accesses-1">0</div>
+                <div class="metric-label">Accesses</div>
+              </div>
+              <div class="metric-card metric-full">
+                <div class="metric-value" id="metric-time-1">0.0 ms</div>
+                <div class="metric-label">Execution Time</div>
+              </div>
+            </div>
+          </div>
+          <!-- Secondary -->
+          <div class="metrics-group hidden" id="metrics-secondary">
+            <div class="metrics-group-label" id="metrics-label-secondary">Secondary</div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value" id="metric-comparisons-2">0</div>
+                <div class="metric-label">Comparisons</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="metric-accesses-2">0</div>
+                <div class="metric-label">Accesses</div>
+              </div>
+              <div class="metric-card metric-full">
+                <div class="metric-value" id="metric-time-2">0.0 ms</div>
+                <div class="metric-label">Execution Time</div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /metrics-panel -->
+      </div><!-- /metrics-section -->
+
+    </div><!-- /sb-playback -->
+  </aside>
+
+  <!-- ─────────────────── CANVAS ─────────────────── -->
+  <div class="canvas-area" id="canvas-area">
+
+    <!-- Primary Visualizer -->
+    <div class="visualizer-panel" id="visualizer-primary">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-algo-icon" id="panel-icon-primary" aria-hidden="true"></div>
+          <div class="panel-algo-name" id="panel-algo-primary">Bubble Sort</div>
+        </div>
+        <div class="panel-header-right">
+          <span class="complexity-badge" id="complexity-primary">O(n²)</span>
+        </div>
+      </div>
+      <div class="panel-viz-area">
+        <div class="bar-chart" id="bar-chart-primary" role="img" aria-label="Primary sorting visualization"></div>
+        <div class="bar-overlay" id="bar-overlay-primary" aria-hidden="true"></div>
+      </div>
+      <div class="panel-progress-track">
+        <div class="progress-bar" id="progress-primary" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Secondary Visualizer (split mode) -->
+    <div class="visualizer-panel hidden" id="visualizer-secondary">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-algo-icon" id="panel-icon-secondary" aria-hidden="true"></div>
+          <div class="panel-algo-name" id="panel-algo-secondary">Merge Sort</div>
+        </div>
+        <div class="panel-header-right">
+          <span class="complexity-badge secondary-badge" id="complexity-secondary">O(n log n)</span>
+        </div>
+      </div>
+      <div class="panel-viz-area">
+        <div class="bar-chart" id="bar-chart-secondary" role="img" aria-label="Secondary sorting visualization"></div>
+        <div class="bar-overlay" id="bar-overlay-secondary" aria-hidden="true"></div>
+      </div>
+      <div class="panel-progress-track">
+        <div class="progress-bar secondary-progress" id="progress-secondary" style="width:0%"></div>
+      </div>
+    </div>
+
+  </div><!-- /canvas-area -->
+</main>
+
+<!-- ═══════════════════════════ CUSTOM INPUT MODAL ═══════════════════════════ -->
+<div class="modal-backdrop hidden" id="modal-custom" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-dialog" role="document">
+
+    <div class="modal-header">
+      <div class="modal-title-row">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11.5 2.5a2.121 2.121 0 0 1 3 3L5 15H2v-3z"/>
+        </svg>
+        <h2 class="modal-title" id="modal-title">Custom Array</h2>
+      </div>
+      <button class="modal-close-btn" id="btn-modal-close" aria-label="Close modal">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-hint">
+        Press <kbd>Enter</kbd>, <kbd>,</kbd> or <kbd>Space</kbd> to add each number as a tag.
+      </p>
+      <div class="tag-field" id="tag-field" tabindex="-1" aria-label="Number input area">
+        <!-- tag bubbles inserted here by JS -->
+        <input type="text" class="tag-input-raw" id="tag-raw-input"
+               placeholder="15, 42, 8…"
+               inputmode="numeric"
+               autocomplete="off"
+               spellcheck="false" />
+      </div>
+      <div class="modal-meta-row">
+        <div class="modal-error hidden" id="modal-error" role="alert" aria-live="polite"></div>
+        <span class="tag-count-badge" id="tag-count">0 values</span>
+      </div>
+      <p class="modal-constraints">Range 1–100 &nbsp;·&nbsp; Max 200 elements</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="btn-modal-clear">Clear All</button>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-apply" id="btn-modal-apply">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8l4 4 6-7"/>
+          </svg>
+          Apply Array
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TOAST ═══════════════════════════ -->
+<div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- Scripts (load order matters) -->
+<script src="js/utils.js"></script>
+<script src="js/algorithms.js"></script>
+<script src="js/visualizer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
